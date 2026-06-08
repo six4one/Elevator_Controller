@@ -28,8 +28,9 @@ static CcioPin *call1_PB = nullptr;		//Input one of the call buttons for Main le
 static CcioPin *call2_PB = nullptr;		//Input one of the call buttons for Main level is pressed
 static CcioPin *cabStop_PB = nullptr;	//Input the stop button on the cab console is pressed (provisional)
 static CcioPin *jogMode = nullptr;		//Input: key switch in the cab control cabinet is in "Jog" position
-static CcioPin *chainDownLimit = nullptr;	//Input: PX to limit how far down the hoist chains can go / hight of the counterweight
-//static CcioPin *??? = nullptr;		//Spare I/O
+static CcioPin *doorXApproach = nullptr;	//Door X is in the home approach zone
+static CcioPin *doorYApproach = nullptr;	//Door Y is in the home approach zone
+
 
 //	CCIO-8 EXPANSION BOARD ALIASES (2 of 8) ---
 static CcioPin *jogCabUp = nullptr;		//Input: one of the Cab UP jog buttons is pressed
@@ -39,7 +40,7 @@ static CcioPin *jogDoorXDown = nullptr;	//Input: one of the DoorX Down jog butto
 static CcioPin *jogDoorYUp = nullptr;	//Input: one of the DoorY Up jog buttons is pressed
 static CcioPin *jogDoorYDown = nullptr;	//Input: one of the DoorY Down jog buttons is pressed
 static CcioPin *jog2Hand = nullptr;		//Input: one of the 2nd-hand buttons is pressed
-//static CcioPin *??? = nullptr;		//Spare I/O
+static CcioPin *chainDownLimit = nullptr;	//Input: PX to limit how far down the hoist chains can go / hight of the counterweight
 
 //	CCIO-8 EXPANSION BOARD ALIASES (3 of 8) ---
 static CcioPin *cabBrake = nullptr;		//Input: Cab's mechanical safety brake system has been deployed
@@ -67,9 +68,9 @@ static CcioPin *cabAtG = nullptr;			//Input: The cab is at Garage level (G)
 static CcioPin *cabAt1 = nullptr;			//Input: The cab is at Main level (1)
 static CcioPin *cabAt2 = nullptr;			//Input: The cab is at Apartment level (2)
 static CcioPin *extDoorsClosed = nullptr;	//Input: All 4 exterior access doors are closed
-//static CcioPin *??? = nullptr;			//Spare I/O
-//static CcioPin *??? = nullptr;			//Spare I/O
-//static CcioPin *??? = nullptr;			//Spare I/O
+//static CcioPin *??? = nullptr;		//Spare I/O
+//static CcioPin *??? = nullptr;		//Spare I/O
+static CcioPin *homingSequence = nullptr;	//ClearCore interacts with the safety circuitry to enable homing operations
 
 //	CCIO-8 EXPANSION BOARD ALIASES (6 of 8) ---
 static CcioPin *unlockDoorB = nullptr;		//Output: Unlock door B to permit entry to cab from outside.
@@ -125,8 +126,8 @@ inline void InitializeElevatorIO() {
 	call2_PB = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOA3);
 	cabStop_PB = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOA4);
 	jogMode = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOA5);
-	chainDownLimit = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOA6);
-//	??? = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOA7);
+	doorXApproach= CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOA6);
+	doorYApproach = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOA7);
 	
 	jogCabUp = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOB0);
 	jogCabDown = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOB1);
@@ -135,7 +136,7 @@ inline void InitializeElevatorIO() {
 	jogDoorYUp = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOB4);
 	jogDoorYDown = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOB5);
 	jog2Hand = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOB6);
-//	??? = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOB7);
+	chainDownLimit = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOB7);
 
 	cabBrake = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOC0);
 	runMode = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOC1);
@@ -160,9 +161,9 @@ inline void InitializeElevatorIO() {
 	cabAt1 = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOE2);
 	cabAt2 = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOE3);
 	extDoorsClosed = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOE4);
-//	??? = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOE5);
-//	??? = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOE6);
-//	??? = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOE7);	
+	// = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOE5);
+	// = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOE6);
+	homingSequence = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOE7);	
 
 	unlockDoorB = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOF0);
 	unlockDoorG = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOF1);
@@ -199,8 +200,8 @@ inline void InitializeElevatorIO() {
 	if (call2_PB) call2_PB->Mode(Connector::INPUT_DIGITAL);
 	if (cabStop_PB) cabStop_PB->Mode(Connector::INPUT_DIGITAL);
 	if (jogMode) jogMode->Mode(Connector::INPUT_DIGITAL);
-//	if (???) ???->Mode(Connector::INPUT_DIGITAL);
-//	if (???) ???->Mode(Connector::INPUT_DIGITAL);
+	if (doorXApproach) doorXApproach->Mode(Connector::INPUT_DIGITAL);
+	if (doorYApproach) doorYApproach->Mode(Connector::INPUT_DIGITAL);
 	
 	if (jogCabUp) jogCabUp->Mode(Connector::INPUT_DIGITAL);
 	if (jogCabDown) jogCabDown->Mode(Connector::INPUT_DIGITAL);
@@ -209,7 +210,7 @@ inline void InitializeElevatorIO() {
 	if (jogDoorYUp) jogDoorYUp->Mode(Connector::INPUT_DIGITAL);
 	if (jogDoorYDown) jogDoorYDown->Mode(Connector::INPUT_DIGITAL);
 	if (jog2Hand) jog2Hand->Mode(Connector::INPUT_DIGITAL);
-//	if (???) ???->Mode(Connector::INPUT_DIGITAL);
+	if (chainDownLimit) chainDownLimit->Mode(Connector::INPUT_DIGITAL);
 	
 	if (cabBrake) cabBrake->Mode(Connector::INPUT_DIGITAL);
 	if (runMode) runMode->Mode(Connector::INPUT_DIGITAL);
@@ -234,11 +235,14 @@ inline void InitializeElevatorIO() {
 	if (cabAtG) cabAtG->Mode(Connector::INPUT_DIGITAL);
 	if (cabAt1) cabAt1->Mode(Connector::INPUT_DIGITAL);
 	if (cabAt2) cabAt2->Mode(Connector::INPUT_DIGITAL);
-//	if (???) ???->Mode(Connector::INPUT_DIGITAL);
-//	if (???) ???->Mode(Connector::INPUT_DIGITAL);
-//	if (???) ???->Mode(Connector::INPUT_DIGITAL);
+	
+//Spare I/O
+//	if (???) ???->Mode(Connector::INPUT_DIGITAL);		//CCIO-8 module #5 D6
+//	if (???) ???->Mode(Connector::INPUT_DIGITAL);		//CCIO-8 module #5 D7
 
-	//Outputs connected to CCIO-8
+//Outputs connected to CCIO-8
+	if (homingSequence) homingSequence->Mode(Connector::OUTPUT_DIGITAL);
+	
 	if (unlockDoorB) unlockDoorB->Mode(Connector::OUTPUT_DIGITAL);
 	if (unlockDoorG) unlockDoorG->Mode(Connector::OUTPUT_DIGITAL);
 	if (unlockDoor1) unlockDoor1->Mode(Connector::OUTPUT_DIGITAL);
