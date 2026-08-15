@@ -100,7 +100,7 @@ const uint32_t doorYOpenAtApartment = (float)(apartmentLevel_I - doorYHeight_I +
 const uint32_t doorXYAtMain_C = (float)(mainLevel_I - doorCloseOffset_I) * doorCountsPerInch;		//# of counts for M0 from cab home to main level
 const uint32_t doorXOpenAtMain_C = (float)(mainLevel_I - doorXHeight_I + doorCloseOffset_I) * doorCountsPerInch;
 const uint32_t doorYOpenAtGarage_C = (float)(garageLevel_I + cabYHeight_I) * doorCountsPerInch;
-const uint32_t doorYStagingAtGarage_C = (float)(garageLevel_I + doorStagingOffset_I) * doorCountsPerInch;
+const uint32_t doorXYStagingAtGarage_C = (float)(garageLevel_I + doorStagingOffset_I) * doorCountsPerInch;
 const uint32_t doorYHome_C = (float)garageLevel_I * doorCountsPerInch;		//# of counts for M2 from cab home door Y's home position @ Garage level
 const uint32_t doorXAtGarage_C = (float)(garageLevel_I - doorCloseOffset_I) * doorCountsPerInch;
 const uint32_t doorXOpenAtBasement_C = (float)(basementLevel_I + cabXHeight_I) * doorCountsPerInch;
@@ -118,7 +118,7 @@ const uint32_t doorAcceleration_PPSS = (float)acceleration_IPSS * doorCountsPerI
 
 
 //General program variables:
-uint32_t flashTime = 0;
+//uint32_t flashTime = 0;
 const uint16_t busPulse = 500; 
 
 
