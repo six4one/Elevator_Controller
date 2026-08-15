@@ -249,13 +249,25 @@
     <Compile Include="Device_Startup\startup_same53.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Include\Transport\TransportPositionResolver.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Include\Transport\TransportPositions.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Include\Transport\TransportSequencer.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Include\Transport\TransportTypes.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\Transport\TransportPositionResolver.cpp">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\Transport\TransportPositions.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\Transport\TransportSequencer.cpp">
       <SubType>compile</SubType>
     </Compile>
     <None Include="Device_Startup\flash_without_bootloader.ld">
