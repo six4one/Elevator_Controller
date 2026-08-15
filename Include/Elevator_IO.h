@@ -25,7 +25,7 @@ static DigitalInOut &liftEnable = ConnectorIO2;
 static CcioPin *callBasement_PB = nullptr;		//Input one of the call buttons for Basement level is pressed
 static CcioPin *callGarage_PB = nullptr;		//Input one of the call buttons for Garage level is pressed
 static CcioPin *callMain_PB = nullptr;		//Input one of the call buttons for Main level is pressed
-static CcioPin *callAppartment_PB = nullptr;		//Input one of the call buttons for Apartment level is pressed
+static CcioPin *callApartment_PB = nullptr;		//Input one of the call buttons for Apartment level is pressed
 static CcioPin *cabStop_PB = nullptr;	//Input the stop button on the cab console is pressed (provisional)
 static CcioPin *jogMode = nullptr;		//Input: key switch in the cab control cabinet is in "Jog" position
 static CcioPin *doorXApproach = nullptr;	//Door X is in the home approach zone
@@ -66,7 +66,7 @@ static CcioPin *cabYLowerBreach = nullptr;	//Input: Laser beam across the cab's 
 static CcioPin *cabAtBasement = nullptr;			//Input: The cab is at Basement level (B)
 static CcioPin *cabAtGarage = nullptr;			//Input: The cab is at Garage level (G)
 static CcioPin *cabAtMain = nullptr;			//Input: The cab is at Main level (1)
-static CcioPin *cabAtAppartment = nullptr;			//Input: The cab is at Apartment level (2)
+static CcioPin *cabAtApartment = nullptr;			//Input: The cab is at Apartment level (2)
 static CcioPin *extDoorsClosed = nullptr;	//Input: All 4 exterior access doors are closed
 //static CcioPin *??? = nullptr;		//Spare I/O
 //static CcioPin *??? = nullptr;		//Spare I/O
@@ -76,11 +76,11 @@ static CcioPin *homingSequence = nullptr;	//Output: ClearCore interacts with the
 static CcioPin *unlockDoorBasement = nullptr;		//Output: Unlock door B to permit entry to cab from outside.
 static CcioPin *unlockDoorGarage = nullptr;		//Output: Unlock door G to permit entry to cab from outside.
 static CcioPin *unlockDoorMain = nullptr;		//Output: Unlock door 1 to permit entry to cab from outside.
-static CcioPin *unlockDoorAppartment = nullptr;		//Output: Unlock door 2 to permit entry to cab from outside.
+static CcioPin *unlockDoorApartment = nullptr;		//Output: Unlock door 2 to permit entry to cab from outside.
 static CcioPin *openDoorBasement = nullptr;		//Output: automatically open exterior door at basement level (provisional)
 static CcioPin *openDoorGarage = nullptr;		//Output: automatically open exterior door at garage level (provisional)
 static CcioPin *openDoorMain = nullptr;		//Output: automatically open exterior door at main level (provisional)
-static CcioPin *openDoorAppartment = nullptr;		//Output: automatically open exterior door at apartment level
+static CcioPin *openDoorApartment = nullptr;		//Output: automatically open exterior door at apartment level
 
 
 
@@ -88,7 +88,7 @@ static CcioPin *openDoorAppartment = nullptr;		//Output: automatically open exte
 static CcioPin *callBasement_PL = nullptr;			//Output: illuminate 2 basement (B) level call buttons (in cab and @ ext door)
 static CcioPin *callGarage_PL = nullptr;			//Output: illuminate 2 garage (G) level call buttons (in cab and @ ext door)
 static CcioPin *callMain_PL = nullptr;			//Output: illuminate 2 main (1) level call buttons (in cab and @ ext door)
-static CcioPin *callAppartment_PL = nullptr;			//Output: illuminate 2 apartment (2) level call buttons (in cab and @ ext door)
+static CcioPin *callApartment_PL = nullptr;			//Output: illuminate 2 apartment (2) level call buttons (in cab and @ ext door)
 static CcioPin *stop_PL = nullptr;			//Output: illuminate the stop button on the cab console
 static CcioPin *enableLaserX = nullptr;		//Output: enable the 2 laser emitters on door X
 static CcioPin *enableLaserY = nullptr;		//Output: enable the 2 laser emitters on door Y
@@ -123,7 +123,7 @@ inline void InitializeElevatorIO() {
 	callBasement_PB = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOA0);
 	callGarage_PB = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOA1);
 	callMain_PB = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOA2);
-	callAppartment_PB = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOA3);
+	callApartment_PB = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOA3);
 	cabStop_PB = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOA4);
 	jogMode = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOA5);
 	doorXApproach= CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOA6);
@@ -159,7 +159,7 @@ inline void InitializeElevatorIO() {
 	cabAtBasement = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOE0);
 	cabAtGarage = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOE1);
 	cabAtMain = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOE2);
-	cabAtAppartment = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOE3);
+	cabAtApartment = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOE3);
 	extDoorsClosed = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOE4);
 	// = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOE5);
 	// = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOE6);
@@ -168,17 +168,17 @@ inline void InitializeElevatorIO() {
 	unlockDoorBasement = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOF0);
 	unlockDoorGarage = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOF1);
 	unlockDoorMain = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOF2);
-	unlockDoorAppartment = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOF3);
+	unlockDoorApartment = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOF3);
 	openDoorBasement = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOF4);
 	openDoorGarage = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOF5);
 	openDoorMain = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOF6);
-	openDoorAppartment = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOF7);
+	openDoorApartment = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOF7);
 	
 
 	callBasement_PL = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOG0);
 	callGarage_PL = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOG1);
 	callMain_PL = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOG2);
-	callAppartment_PL = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOG3);
+	callApartment_PL = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOG3);
 	stop_PL = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOG4);
 	enableLaserX = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOG5);
 	enableLaserY = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOG6);
@@ -197,7 +197,7 @@ inline void InitializeElevatorIO() {
 	if (callBasement_PB) callBasement_PB->Mode(Connector::INPUT_DIGITAL);
 	if (callGarage_PB) callGarage_PB->Mode(Connector::INPUT_DIGITAL);
 	if (callMain_PB) callMain_PB->Mode(Connector::INPUT_DIGITAL);
-	if (callAppartment_PB) callAppartment_PB->Mode(Connector::INPUT_DIGITAL);
+	if (callApartment_PB) callApartment_PB->Mode(Connector::INPUT_DIGITAL);
 	if (cabStop_PB) cabStop_PB->Mode(Connector::INPUT_DIGITAL);
 	if (jogMode) jogMode->Mode(Connector::INPUT_DIGITAL);
 	if (doorXApproach) doorXApproach->Mode(Connector::INPUT_DIGITAL);
@@ -234,7 +234,7 @@ inline void InitializeElevatorIO() {
 	if (cabAtBasement) cabAtBasement->Mode(Connector::INPUT_DIGITAL);
 	if (cabAtGarage) cabAtGarage->Mode(Connector::INPUT_DIGITAL);
 	if (cabAtMain) cabAtMain->Mode(Connector::INPUT_DIGITAL);
-	if (cabAtAppartment) cabAtAppartment->Mode(Connector::INPUT_DIGITAL);
+	if (cabAtApartment) cabAtApartment->Mode(Connector::INPUT_DIGITAL);
 	
 //Spare I/O
 //	if (???) ???->Mode(Connector::INPUT_DIGITAL);		//CCIO-8 module #5 D6
@@ -246,16 +246,16 @@ inline void InitializeElevatorIO() {
 	if (unlockDoorBasement) unlockDoorBasement->Mode(Connector::OUTPUT_DIGITAL);
 	if (unlockDoorGarage) unlockDoorGarage->Mode(Connector::OUTPUT_DIGITAL);
 	if (unlockDoorMain) unlockDoorMain->Mode(Connector::OUTPUT_DIGITAL);
-	if (unlockDoorAppartment) unlockDoorAppartment->Mode(Connector::OUTPUT_DIGITAL);
+	if (unlockDoorApartment) unlockDoorApartment->Mode(Connector::OUTPUT_DIGITAL);
 	if (openDoorBasement) openDoorBasement->Mode(Connector::OUTPUT_DIGITAL);
 	if (openDoorGarage) openDoorGarage->Mode(Connector::OUTPUT_DIGITAL);
 	if (openDoorMain) openDoorMain->Mode(Connector::OUTPUT_DIGITAL);
-	if (openDoorAppartment) openDoorAppartment->Mode(Connector::OUTPUT_DIGITAL);
+	if (openDoorApartment) openDoorApartment->Mode(Connector::OUTPUT_DIGITAL);
 	
 	if (callBasement_PL) callBasement_PL->Mode(Connector::OUTPUT_DIGITAL);
 	if (callGarage_PL) callGarage_PL->Mode(Connector::OUTPUT_DIGITAL);
 	if (callMain_PL) callMain_PL->Mode(Connector::OUTPUT_DIGITAL);
-	if (callAppartment_PL) callAppartment_PL->Mode(Connector::OUTPUT_DIGITAL);
+	if (callApartment_PL) callApartment_PL->Mode(Connector::OUTPUT_DIGITAL);
 	if (stop_PL) stop_PL->Mode(Connector::OUTPUT_DIGITAL);
 	if (enableLaserX) enableLaserX->Mode(Connector::OUTPUT_DIGITAL);
 	if (enableLaserY) enableLaserY->Mode(Connector::OUTPUT_DIGITAL);

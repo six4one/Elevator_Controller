@@ -18,7 +18,7 @@ struct Floor {
 	float height;
 	DoorID activeDoor;
 	DoorDirection direction;
-	bool requiresApproach; // True ONLY for Basement and Garage
+	bool requiresStaging; // True ONLY for Basement and Garage
 };
 
 
@@ -43,7 +43,7 @@ const float cabYHeight_I = 84;			//cab interior floor-to-ceiling distance on Y-s
 const float doorXHeight_I = 90.125;		//height of the X-side door
 const float doorYHeight_I = 90.125;		//height of the Y-side door
 const float doorCloseOffset_I = -4.25;	//distance bottom edge of door (X or Y) must be offset from the cab floor to close the interlock circuitry
-const float stagingOffset_I = 0.5;	//distance from the door (X @ basement, or Y @ garage) home position where the cab and doors synchronize as the relevant door goes in or out of the parked position
+const float doorStagingOffset_I = 0.5;	//distance from the door (X @ basement, or Y @ garage) home position where the cab and doors synchronize as the relevant door goes in or out of the parked position
 
 //velocity Parameters in inches/minute
 const float deratingFactor = 1;				//1 = 100%		Factor to throttle the elevator's performance during debugging
@@ -66,11 +66,11 @@ const uint32_t cabDriveTeeth = 22;				//number of teeth on the hoist output driv
 const float cabCountsPerInch = (float)cabCountsPerRev * cabGearRatio / cabChainPitch / cabDriveTeeth;
 
 //Derived cab positions
-const uint32_t cabAtAppartment_C = (float)apartmentLevel_I * cabCountsPerInch;	//# of counts for M0 from cab home to apartment level
+const uint32_t cabAtApartment_C = (float)apartmentLevel_I * cabCountsPerInch;	//# of counts for M0 from cab home to apartment level
 const uint32_t cabAtMain_C = (float)mainLevel_I * cabCountsPerInch;		//# of counts for M0 from cab home to main level
-const uint32_t cabStagingAtGarage_C = (float)(garageLevel_I + doorCloseOffset_I + stagingOffset_I) * cabCountsPerInch;
+const uint32_t cabStagingAtGarage_C = (float)(garageLevel_I + doorCloseOffset_I + doorStagingOffset_I) * cabCountsPerInch;
 const uint32_t cabAtGarage_C = (float)garageLevel_I * cabCountsPerInch;		//# of counts for M0 from cab home to garage level
-const uint32_t cabStagingAtBasement_C = (float)(basementLevel_I + doorCloseOffset_I + stagingOffset_I) * cabCountsPerInch;
+const uint32_t cabStagingAtBasement_C = (float)(basementLevel_I + doorCloseOffset_I + doorStagingOffset_I) * cabCountsPerInch;
 const uint32_t cabAtBasement_C = (float)basementLevel_I * cabCountsPerInch;	//# of counts for M0 from cab home to basement level
 
 //Derived cab velocities in pulses/second
@@ -95,16 +95,16 @@ const uint32_t doorDriveTeeth = 17;				//number of teeth on the door output driv
 const float doorCountsPerInch = (float)doorCountsPerRev * doorGearRatio / doorChainPitch / doorDriveTeeth;
 
 //Derived door positions
-const uint32_t doorXYAtAppartment_C = (float)(apartmentLevel_I - doorCloseOffset_I) * doorCountsPerInch;	//# of counts for M0 from cab home to apartment level
-const uint32_t doorYOpenAtAppartment = (float)(apartmentLevel_I - doorYHeight_I + doorCloseOffset_I) * doorCountsPerInch;
+const uint32_t doorXYAtApartment_C = (float)(apartmentLevel_I - doorCloseOffset_I) * doorCountsPerInch;	//# of counts for M0 from cab home to apartment level
+const uint32_t doorYOpenAtApartment = (float)(apartmentLevel_I - doorYHeight_I + doorCloseOffset_I) * doorCountsPerInch;
 const uint32_t doorXYAtMain_C = (float)(mainLevel_I - doorCloseOffset_I) * doorCountsPerInch;		//# of counts for M0 from cab home to main level
 const uint32_t doorXOpenAtMain_C = (float)(mainLevel_I - doorXHeight_I + doorCloseOffset_I) * doorCountsPerInch;
 const uint32_t doorYOpenAtGarage_C = (float)(garageLevel_I + cabYHeight_I) * doorCountsPerInch;
-const uint32_t doorYStagingAtGarage_C = (float)(garageLevel_I + stagingOffset_I) * doorCountsPerInch;
+const uint32_t doorYStagingAtGarage_C = (float)(garageLevel_I + doorStagingOffset_I) * doorCountsPerInch;
 const uint32_t doorYHome_C = (float)garageLevel_I * doorCountsPerInch;		//# of counts for M2 from cab home door Y's home position @ Garage level
 const uint32_t doorXAtGarage_C = (float)(garageLevel_I - doorCloseOffset_I) * doorCountsPerInch;
 const uint32_t doorXOpenAtBasement_C = (float)(basementLevel_I + cabXHeight_I) * doorCountsPerInch;
-const uint32_t doorXStagingAtBasement_C = (float)(basementLevel_I + stagingOffset_I) * doorCountsPerInch;
+const uint32_t doorXStagingAtBasement_C = (float)(basementLevel_I + doorStagingOffset_I) * doorCountsPerInch;
 const uint32_t doorXHome_C = (float)basementLevel_I * doorCountsPerInch;		//# of counts for M0 from cab home door X's home position @ Basement level
 
 //Derived door velocities in pulses/second
