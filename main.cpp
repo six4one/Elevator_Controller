@@ -37,10 +37,10 @@ are three exceptions to this:
 #define doorYMotor ConnectorM2
 
 Floor floors[] = {
-	{"Apartment", cabAt2_C,	DOOR_Y, DOWN, false},
-	{"Main",      cabAt1_C,	DOOR_X, DOWN, false},
-	{"Garage",    cabAtG_C,	DOOR_Y, UP,   true},
-	{"Basement",  cabAtB_C,	DOOR_X, UP,   true}
+	{"Apartment", cabAtAppartment_C,	DOOR_Y, DOWN, false},
+	{"Main",      cabAtMain_C,	DOOR_X, DOWN, false},
+	{"Garage",    cabAtGarage_C,	DOOR_Y, UP,   true},
+	{"Basement",  cabAtBasement_C,	DOOR_X, UP,   true}
 };
 
 /*
@@ -283,8 +283,8 @@ void HandleJogMode() {
 	bool dyAtHomeLimit  = doorYHome.State(); // Garage level stop
 	
 	// Proximity Slow-down zones
-	bool cabInBasementZone = cabAtB->State();
-	bool cabInApartmentZone = cabAt2->State();
+	bool cabInBasementZone = cabAtBasement->State();
+	bool cabInApartmentZone = cabAtAppartment->State();
 
 	// 3. Cab Jog Logic
 	int32_t cabVel = 0;
