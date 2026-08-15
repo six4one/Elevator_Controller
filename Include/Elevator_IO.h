@@ -28,8 +28,8 @@ static CcioPin *callMain_PB = nullptr;		//Input one of the call buttons for Main
 static CcioPin *callApartment_PB = nullptr;		//Input one of the call buttons for Apartment level is pressed
 static CcioPin *cabStop_PB = nullptr;	//Input the stop button on the cab console is pressed (provisional)
 static CcioPin *jogMode = nullptr;		//Input: key switch in the cab control cabinet is in "Jog" position
-static CcioPin *doorXApproach = nullptr;	//Door X is in the home approach zone
-static CcioPin *doorYApproach = nullptr;	//Door Y is in the home approach zone
+static CcioPin *doorXStagingZone = nullptr;	//Door X is in the home approach zone
+static CcioPin *doorYStagingZone = nullptr;	//Door Y is in the home approach zone
 
 
 //	CCIO-8 EXPANSION BOARD ALIASES (2 of 8) ---
@@ -126,8 +126,8 @@ inline void InitializeElevatorIO() {
 	callApartment_PB = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOA3);
 	cabStop_PB = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOA4);
 	jogMode = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOA5);
-	doorXApproach= CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOA6);
-	doorYApproach = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOA7);
+	doorXStagingZone= CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOA6);
+	doorYStagingZone = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOA7);
 	
 	jogCabUp = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOB0);
 	jogCabDown = CcioMgr.PinByIndex(CLEARCORE_PIN_CCIOB1);
@@ -200,8 +200,8 @@ inline void InitializeElevatorIO() {
 	if (callApartment_PB) callApartment_PB->Mode(Connector::INPUT_DIGITAL);
 	if (cabStop_PB) cabStop_PB->Mode(Connector::INPUT_DIGITAL);
 	if (jogMode) jogMode->Mode(Connector::INPUT_DIGITAL);
-	if (doorXApproach) doorXApproach->Mode(Connector::INPUT_DIGITAL);
-	if (doorYApproach) doorYApproach->Mode(Connector::INPUT_DIGITAL);
+	if (doorXStagingZone) doorXStagingZone->Mode(Connector::INPUT_DIGITAL);
+	if (doorYStagingZone) doorYStagingZone->Mode(Connector::INPUT_DIGITAL);
 	
 	if (jogCabUp) jogCabUp->Mode(Connector::INPUT_DIGITAL);
 	if (jogCabDown) jogCabDown->Mode(Connector::INPUT_DIGITAL);
