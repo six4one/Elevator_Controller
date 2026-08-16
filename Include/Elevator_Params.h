@@ -42,7 +42,7 @@ const float cabXHeight_I = 84;			//cab interior floor-to-ceiling distance on X-s
 const float cabYHeight_I = 84;			//cab interior floor-to-ceiling distance on Y-side
 const float doorXHeight_I = 90.125;		//height of the X-side door
 const float doorYHeight_I = 90.125;		//height of the Y-side door
-const float doorCloseOffset_I = -4.25;	//distance bottom edge of door (X or Y) must be offset from the cab floor to close the interlock circuitry
+const float doorCloseOffset_I = 4.25;	//distance bottom edge of door (X or Y) must be offset from the cab floor to close the interlock circuitry
 const float doorStagingOffset_I = 0.5;	//distance from the door (X @ basement, or Y @ garage) home position where the cab and doors synchronize as the relevant door goes in or out of the parked position
 
 //velocity Parameters in inches/minute

@@ -258,6 +258,9 @@
     <Compile Include="Include\Transport\TransportSequencer.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Include\Transport\TransportTestHarness.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Include\Transport\TransportTypes.h">
       <SubType>compile</SubType>
     </Compile>
@@ -268,6 +271,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\Transport\TransportSequencer.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\Transport\TransportTestHarness.cpp">
       <SubType>compile</SubType>
     </Compile>
     <None Include="Device_Startup\flash_without_bootloader.ld">

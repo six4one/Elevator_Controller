@@ -16,8 +16,16 @@ namespace Transport
      * The TransportSequencer object begins with its current position set to
      * Basement, which is the first row of the canonical Transport table.
      */
+	
+//*****************************************************************
+//	origin location for test harness
+//	target location is set inside main.cpp
+//*****************************************************************
     TransportSequencer::TransportSequencer()
-        : currentPosition(TransportPositionId::Basement)
+        //: currentPosition(TransportPositionId::Basement)
+		//: currentPosition(TransportPositionId::Garage)
+		//: currentPosition(TransportPositionId::Main)
+		: currentPosition(TransportPositionId::Apartment)
     {
     }
 
