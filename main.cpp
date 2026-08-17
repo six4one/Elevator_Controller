@@ -1,69 +1,115 @@
+/*
+ * main.cpp
+ *
+ * Application entry point for the Elevator controller.
+ *
+ * During development, main() launches the selected diagnostic
+ * harness. The test implementation itself belongs in the harness.
+ */
+
 #include "ClearCore.h"
-#include "Transport/TransportTestHarness.h"
-#include "Transport/TransportTypes.h"
+
+#include "DoorService/DoorServiceTestHarness.h"
+
 
 #define SerialPort ConnectorUsb
 #define baudRate 9600
 
-//TransportTestHarness harness;
-Transport::TransportTestHarness harness;
+
+/*
+ * ------------------------------------------------------------
+ * STARTUP COUNTDOWN
+ * ------------------------------------------------------------
+ *
+ * Ten seconds to connect the serial monitor after firmware upload.
+ */
+static void StartupCountdown()
+{
+    for (int second = 10; second > 0; --second)
+    {
+        ConnectorLed.State(true);
+        Delay_ms(250);
+
+        ConnectorLed.State(false);
+        Delay_ms(750);
+    }
+}
+
+
+/*
+ * ------------------------------------------------------------
+ * HEARTBEAT
+ * ------------------------------------------------------------
+ *
+ * Indicates that the selected test has completed and the
+ * controller is still executing normally.
+ */
+static void Heartbeat()
+{
+    bool ledState = false;
+    uint32_t lastHeartbeat = Milliseconds();
+
+    while (true)
+    {
+        if (Milliseconds() - lastHeartbeat >= 1000)
+        {
+            lastHeartbeat = Milliseconds();
+
+            ledState = !ledState;
+            ConnectorLed.State(ledState);
+
+            SerialPort.SendLine("Heartbeat");
+        }
+    }
+}
+
 
 int main(void)
 {
-	// USB serial initialization
-	SerialPort.Mode(Connector::USB_CDC);
-	SerialPort.Speed(baudRate);
-	SerialPort.PortOpen();
+    /*
+     * ------------------------------------------------------------
+     * SERIAL INITIALIZATION
+     * ------------------------------------------------------------
+     */
+    SerialPort.Mode(Connector::USB_CDC);
+    SerialPort.Speed(baudRate);
+    SerialPort.PortOpen();
 
-	// Ten-second startup countdown.
-	// The LED pulses once per second so the serial monitor can be opened
-	// after firmware upload, before diagnostic output begins.
-	for (int second = 10; second > 0; --second)
-	{
-		ConnectorLed.State(true);
-		Delay_ms(250);
 
-		ConnectorLed.State(false);
-		Delay_ms(750);
-	}
+    /*
+     * Give the operator time to connect the serial monitor.
+     */
+    StartupCountdown();
 
-	// Execution markers bracket RunTo() so we can determine whether
-	// the Transport test harness returns to main().
-	SerialPort.SendLine();
-	SerialPort.SendLine("=== Transport Test Diagnostic ===");
-	SerialPort.SendLine("Countdown complete.");
-	SerialPort.SendLine("About to run Transport test.");
-	
-	
-//*******************************************************
-//	Target Location for test harness
-//	origin location are set inside TransportSequencer.cpp
-//*******************************************************
-	//harness.RunTo(TransportPositionId::Apartment);
-	//harness.RunTo(TransportPositionId::Main);
-	//harness.RunTo(TransportPositionId::Garage);
-	harness.RunTo(TransportPositionId::Basement);
 
-	// If this appears, RunTo() returned to main().
-	SerialPort.SendLine("Transport test returned.");
-	SerialPort.SendLine("Entering heartbeat.");
+    /*
+     * ------------------------------------------------------------
+     * DOORSERVICE TEST
+     * ------------------------------------------------------------
+     */
+    DoorService::DoorServiceTestHarness doorTest;
 
-	// Heartbeat
-	bool ledState = false;
-	uint32_t lastHeartbeat = Milliseconds();
+    SerialPort.SendLine("");
+    SerialPort.SendLine("=== DoorService Test Selected ===");
 
-	while (true)
-	{
-		if (Milliseconds() - lastHeartbeat >= 1000)
-		{
-			lastHeartbeat = Milliseconds();
+    doorTest.RunBasicTest();
 
-			ledState = !ledState;
-			ConnectorLed.State(ledState);
 
-			SerialPort.SendLine("Heartbeat");
-		}
-	}
+    /*
+     * ------------------------------------------------------------
+     * TEST COMPLETE
+     * ------------------------------------------------------------
+     */
+    SerialPort.SendLine("");
+    SerialPort.SendLine("Selected test returned.");
+    SerialPort.SendLine("Entering heartbeat.");
 
-	return 0;
+
+    /*
+     * Continue running after the test.
+     */
+    Heartbeat();
+
+
+    return 0;
 }
