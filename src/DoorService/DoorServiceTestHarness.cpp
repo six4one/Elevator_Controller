@@ -1,13 +1,12 @@
 /*
  * DoorServiceTestHarness.cpp
  *
- * Purpose:
- *     Hardware-independent diagnostic exercise of the DoorService HSM.
- *
- * This harness does NOT command door motors.
+ * Hardware-independent diagnostic exercise of the DoorService HSM.
  */
 
 #include "DoorService/DoorServiceTestHarness.h"
+
+#include "DoorService/DoorService.h"
 
 #include "ClearCore.h"
 
@@ -15,10 +14,6 @@
 
 namespace DoorService
 {
-    /*
-     * Convert a DoorState enumeration value into a human-readable
-     * string for diagnostic output.
-     */
     static const char* StateName(DoorState state)
     {
         switch (state)
@@ -34,15 +29,18 @@ namespace DoorService
 
             case DoorState::Closing:
                 return "Closing";
+				
+			case DoorState::Halting:
+			    return "Halting";
+
+			case DoorState::Halted:
+			    return "Halted";
         }
 
         return "UNKNOWN";
     }
 
 
-    /*
-     * Report the current HSM state.
-     */
     static void ReportState(DoorService& doorService)
     {
         char message[96];
@@ -56,76 +54,54 @@ namespace DoorService
     }
 
 
-    /*
-     * RunBasicTest()
-     *
-     * Exercise the DoorService HSM, including events which are
-     * deliberately invalid for the current state.
-     *
-     * Expected state sequence:
-     *
-     *     Closed
-     *         + CloseRequest
-     *         -> Closed
-     *
-     *     Closed
-     *         + OpenRequest
-     *         -> Opening
-     *
-     *     Opening
-     *         + OpenRequest
-     *         -> Opening
-     *
-     *     Opening
-     *         + OpenPositionReached
-     *         -> Open
-     *
-     *     Open
-     *         + CloseRequest
-     *         -> Closing
-     *
-     *     Closing
-     *         + ClosedPositionReached
-     *         -> Closed
-     */
     void DoorServiceTestHarness::RunBasicTest()
     {
         /*
+         * Print the diagnostic header BEFORE constructing the HSM.
+         *
+         * The constructor executes the initial Closed entry action,
+         * which now includes a two-second delay.
+         */
+        ConnectorUsb.SendLine("");
+        ConnectorUsb.SendLine("========================================");
+        ConnectorUsb.SendLine("DoorService HSM Entry/Exit Diagnostic");
+        ConnectorUsb.SendLine("========================================");
+
+
+        /*
          * Create the DoorService HSM.
          *
-         * Construction should place it in Closed.
+         * Construction enters Closed and therefore executes the
+         * Closed entry action.
          */
         DoorService doorService;
 
 
-        ConnectorUsb.SendLine("");
-        ConnectorUsb.SendLine("========================================");
-        ConnectorUsb.SendLine("DoorService HSM Diagnostic");
-        ConnectorUsb.SendLine("========================================");
-
-
         /*
-         * ------------------------------------------------------------
+         * --------------------------------------------------------
          * INITIAL STATE
-         * ------------------------------------------------------------
+         * --------------------------------------------------------
          */
+        ConnectorUsb.SendLine("");
         ConnectorUsb.SendLine("Initial state:");
 
         ReportState(doorService);
 
 
         /*
-         * ------------------------------------------------------------
-         * TEST 1 — INVALID EVENT
+         * --------------------------------------------------------
+         * TEST 1
          *
-         * Closed + CloseRequest
+         * Invalid event while Closed.
          *
-         * There is no transition:
+         * No transition should occur.
          *
-         *     Closed --> Closing : CloseRequest
+         * Therefore there should be:
          *
-         * Therefore the state must remain Closed.
-         * ------------------------------------------------------------
+         *     NO EXIT: Closed
+         *     NO ENTER: ...
+         *
+         * --------------------------------------------------------
          */
         ConnectorUsb.SendLine("");
         ConnectorUsb.SendLine("TEST 1: Invalid event in Closed");
@@ -137,14 +113,20 @@ namespace DoorService
 
 
         /*
-         * ------------------------------------------------------------
-         * TEST 2 — VALID TRANSITION
+         * --------------------------------------------------------
+         * TEST 2
          *
-         * Closed --> Opening : OpenRequest
-         * ------------------------------------------------------------
+         * Closed --> Opening
+         *
+         * Expected sequence:
+         *
+         *     EXIT: Closed
+         *     ENTER: Opening
+         *     2 second delay
+         * --------------------------------------------------------
          */
         ConnectorUsb.SendLine("");
-        ConnectorUsb.SendLine("TEST 2: Valid transition");
+        ConnectorUsb.SendLine("TEST 2: Closed -> Opening");
         ConnectorUsb.SendLine("Event: OpenRequest");
 
         doorService.ProcessEvent(DoorEvent::OpenRequest);
@@ -153,17 +135,13 @@ namespace DoorService
 
 
         /*
-         * ------------------------------------------------------------
-         * TEST 3 — INVALID EVENT
+         * --------------------------------------------------------
+         * TEST 3
          *
-         * Opening + OpenRequest
+         * Invalid event while Opening.
          *
-         * There is no transition:
-         *
-         *     Opening --> ??? : OpenRequest
-         *
-         * Therefore the state must remain Opening.
-         * ------------------------------------------------------------
+         * No transition should occur.
+         * --------------------------------------------------------
          */
         ConnectorUsb.SendLine("");
         ConnectorUsb.SendLine("TEST 3: Invalid event in Opening");
@@ -175,14 +153,20 @@ namespace DoorService
 
 
         /*
-         * ------------------------------------------------------------
-         * TEST 4 — VALID TRANSITION
+         * --------------------------------------------------------
+         * TEST 4
          *
-         * Opening --> Open : OpenPositionReached
-         * ------------------------------------------------------------
+         * Opening --> Open
+         *
+         * Expected sequence:
+         *
+         *     EXIT: Opening
+         *     ENTER: Open
+         *     2 second delay
+         * --------------------------------------------------------
          */
         ConnectorUsb.SendLine("");
-        ConnectorUsb.SendLine("TEST 4: Valid transition");
+        ConnectorUsb.SendLine("TEST 4: Opening -> Open");
         ConnectorUsb.SendLine("Event: OpenPositionReached");
 
         doorService.ProcessEvent(DoorEvent::OpenPositionReached);
@@ -191,14 +175,20 @@ namespace DoorService
 
 
         /*
-         * ------------------------------------------------------------
-         * TEST 5 — VALID TRANSITION
+         * --------------------------------------------------------
+         * TEST 5
          *
-         * Open --> Closing : CloseRequest
-         * ------------------------------------------------------------
+         * Open --> Closing
+         *
+         * Expected sequence:
+         *
+         *     EXIT: Open
+         *     ENTER: Closing
+         *     2 second delay
+         * --------------------------------------------------------
          */
         ConnectorUsb.SendLine("");
-        ConnectorUsb.SendLine("TEST 5: Valid transition");
+        ConnectorUsb.SendLine("TEST 5: Open -> Closing");
         ConnectorUsb.SendLine("Event: CloseRequest");
 
         doorService.ProcessEvent(DoorEvent::CloseRequest);
@@ -207,14 +197,20 @@ namespace DoorService
 
 
         /*
-         * ------------------------------------------------------------
-         * TEST 6 — VALID TRANSITION
+         * --------------------------------------------------------
+         * TEST 6
          *
-         * Closing --> Closed : ClosedPositionReached
-         * ------------------------------------------------------------
+         * Closing --> Closed
+         *
+         * Expected sequence:
+         *
+         *     EXIT: Closing
+         *     ENTER: Closed
+         *     2 second delay
+         * --------------------------------------------------------
          */
         ConnectorUsb.SendLine("");
-        ConnectorUsb.SendLine("TEST 6: Valid transition");
+        ConnectorUsb.SendLine("TEST 6: Closing -> Closed");
         ConnectorUsb.SendLine("Event: ClosedPositionReached");
 
         doorService.ProcessEvent(DoorEvent::ClosedPositionReached);
@@ -223,11 +219,11 @@ namespace DoorService
 
 
         /*
-         * ------------------------------------------------------------
+         * --------------------------------------------------------
          * TEST COMPLETE
-         * ------------------------------------------------------------
+         * --------------------------------------------------------
          */
         ConnectorUsb.SendLine("");
-        ConnectorUsb.SendLine("DoorService HSM test returned.");
+        ConnectorUsb.SendLine("DoorService entry/exit test returned.");
     }
 }
